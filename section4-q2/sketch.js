@@ -9,7 +9,7 @@ function setup(){
 
   let scores = [0];
   for(let i = 1; i <= 10; i++){
-    scores[i] = random(20, 100); // 60以上100未満のランダムな数を代入
+    scores[i] = random(20, 100); // 20以上100未満のランダムな数を代入
   }
   print(scores);
 
