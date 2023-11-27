@@ -1,57 +1,58 @@
 // 最終課題を制作しよう
-let px = 0;
+let px = 0;//Playerの座標
 let py = 0;
-let ex = 0;
+let ex = 0;//Enemyの座標
 let ey = 0;
-let bullets = [];
-let ebullets = [];
+let bullets = [];//味方の玉の集まり
+let ebullets = [];//敵方の玉の集まり
 let t = 0;
 let et = 0;
-let health = 5;
-let ehp = 10;
+let at = 0;
+let health = 4;//味方のHP
+let ehp = 5;//敵方のHP
 
 function setup(){
-  createCanvas(400, 600);
+  createCanvas(400, 600);//画面の大きさ
   draw();
-  px = width / 2;
+  px = width / 2;//自分の飛行機のデフォルト位置
   py = height - height / 5;
-  ex = width/2;
+  ex = width/2;//敵の飛行機のデフォルト位置
   ey = height/5;
 }
 
 
 function draw(){
   background(255);
-  textSize(32);
+  textSize(32);//自分と敵のHPを表すところ
   fill("skyblue");
   text("Your HP:" + health, 10, 30);
   fill("red");
   text("Enemy's HP:" + ehp, 10, 60);
   fill("white");
-  drawEnemy(ex, ey, 10, 30);
+  drawEnemy(ex, ey, 10, 30);//敵機を描く
   for(let i = 0; i < ebullets.length; i++){ // 敵の玉を描く
     let eb = ebullets[i];
-    ellipse(eb.x + eb.size / 2, eb.y + eb.size * 3, eb.size);//玉のデフォルト位置と大きさ
+    ellipse(eb.x + eb.size / 2, eb.y + eb.size * 3, eb.size);//敵玉のデフォルト位置と大きさ
     eb.x += eb.vx;//飛行機が移動した場合、玉のｘは変わらない
-    eb.y += eb.vy;//玉の移動速度
+    eb.y += eb.vy;//敵玉の移動速度
   }
 
   if(!mouseIsPressed && et % 100 == 0){
     for(num=0;num<1;num++){
         const eb = { x: ex , y: ey, size: random(5,10), vx: 0, vy: 5 };
-        ebullets.push(eb);//毎回玉を一個生成する
+        ebullets.push(eb);//毎回敵玉を一個生成する
     }
   }
   et++;
 
-  drawPlane(px, py, 10, 30);
+  drawPlane(px, py, 10, 30);//自分の飛行機を描くとWASD移動操作
   if(keyIsDown("W".charCodeAt(0))){ py -= 5; }
   if(keyIsDown("A".charCodeAt(0))){ px -= 5; }
   if(keyIsDown("S".charCodeAt(0))){ py += 5; }
   if(keyIsDown("D".charCodeAt(0))){ px += 5; }
  
   if(keyIsDown(" ".charCodeAt(0))){ px = width/2; py = height - height/5; }
-  for(let i = 0; i < bullets.length; i++){ // 味方の玉を描く
+  for(let i = 0; i < bullets.length; i++){ //味方の玉を描く
     let b = bullets[i];
     drawBullet(b.x + b.size / 2, b.y - b.size * 3, b.size);//玉のデフォルト位置と大きさ
     b.x += b.vx;//飛行機が移動した場合、玉のｘは変わらない
@@ -66,6 +67,14 @@ function draw(){
   }
   t++;
 
+  //敵を自動的に動かせる、ランダムなスピードで移動する
+  if(at != 0 && at % 10 == 0){
+    ex += random(-10, 10);
+    if(ex < 0) ex = width;
+    if(ex > width) ex = 0;
+  }
+  at++;
+
   //敵の玉と自分の飛行機の距離を計算する
   for(let i = 0; i < bullets.length; i++){
     for(let j = i + 1; j < ebullets.length; j++){
@@ -74,7 +83,7 @@ function draw(){
         if(dist(b1.x, b1.y, b2.x, b2.y) <= b1.size/2 + b2.size/2){
           bullets.splice(i, 1);
           ebullets.splice(j, 1);
-        }//もし玉と玉の距離が玉自身の大きさより小さい場合、2つの玉を消す
+        }//もし玉と玉の距離が玉自身の大きさより小さい場合、2つの玉を消す。また、splice()は授業でなかったメソッドで、玉を消すために使った。
     }
   }
 
@@ -86,14 +95,6 @@ function draw(){
     }
   }
 
-  if(health == 0) {
-    background(255);
-    textSize(32);
-    fill("red");
-    text("GAME OVER", 100, 300);
-    noLoop();
-  }
-
   for(let i = 0; i < bullets.length; i++){
     let b1 = bullets[i];
     if(dist(b1.x, b1.y, ex, ey) <= b1.size/2 + 10){//敵を打ったら、玉を消し、敵のHP-1
@@ -102,8 +103,16 @@ function draw(){
     }
   }
 
+  if(health == 0) {
+    background(255);//ゲームオバーの画面
+    textSize(32);
+    fill("red");
+    text("GAME OVER", 100, 300);
+    noLoop();
+  }
+
   if(ehp == 0) {
-    background(255);
+    background(255);//勝利画面
     textSize(32);
     fill("green");
     text("YOU WIN", 100, 300);
