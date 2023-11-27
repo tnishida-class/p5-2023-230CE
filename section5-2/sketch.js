@@ -4,12 +4,14 @@ function setup(){
   createCanvas(300, 100);
   background(200);
   fill(0);
-  crossmark(10, 10, 90, 90);
-  ngmark(150, 50, 80);
-  star(250, 50, 40);
+  //crossmark(10, 10, 90, 90);
+  //ngmark(150, 50, 80);
+  //star(250, 50, 40);
+  polygon(width/3, height/2, 40, 3);//polygon(cx, cy, r, p(triangle/quadrangle/pentagon/...))
+  star(width*2/3, height/2, 40, 16);//５以上奇数のみ
 }
 
-function crossmark(x1, y1, x2, y2){
+/*function crossmark(x1, y1, x2, y2){
   line(x1, y1, x2, y2);
   line(x2, y1, x1, y2);
 }
@@ -22,12 +24,23 @@ function ngmark(cx, cy, r){
   ellipse(cx, cy, r);
   line(cx - d, cy - d, cx + d, cy + d);
   pop();
+}*/
+
+function star(cx, cy, r, p){
+  beginShape();
+  for(var i = 0; i < p; i++){
+    let theta = (HALF_PI - TWO_PI * i * 2 / p) - PI;
+    let x = cx + cos(theta) * r;
+    let y = cy + sin(theta) * r;
+    vertex(x,y);
+  }
+  endShape(CLOSE);
 }
 
-function star(cx, cy, r){
+function polygon(cx, cy, r, p){
   beginShape();
-  for(var i = 0; i < 5; i++){
-    let theta = TWO_PI * i * 2 / 5 - HALF_PI;
+  for(var i = 0; i < p; i++){
+    let theta = TWO_PI * i / p - HALF_PI;
     let x = cx + cos(theta) * r;
     let y = cy + sin(theta) * r;
     vertex(x,y);
